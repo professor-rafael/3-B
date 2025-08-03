@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Armazém Campo & Cidade</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     <link rel="icon" href="ras.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a4d2a, #4a752c);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #e0e0e0;
+            overflow: auto;
+            position: relative;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 900px;
+            background-color: rgba(0, 15, 7, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            border: 1px solid #3a7d3a;
+            position: relative;
+            z-index: 2;
+            margin: 20px 0;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #1e3c1e, #2d5a2d);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #4a9e4a;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            font-size: 1.8rem;
+            color: #7cda7c;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px #4caf50;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .close {
+            background-color: #ff5f57;
+        }
+        
+        .minimize {
+            background-color: #ffbd2e;
+        }
+        
+        .maximize {
+            background-color: #28c940;
+        }
+        
+        .content {
+            padding: 25px;
+            max-height: 60vh;
+            overflow-y: auto;
+            background-color: rgba(0, 5, 2, 0.7);
+            position: relative;
+        }
+        
+        .welcome-message {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            border-left: 3px solid #4caf50;
+            padding-left: 15px;
+        }
+        
+        .welcome-message h2 {
+            color: #7cda7c;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .welcome-message p {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .product-highlight {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+            justify-content: center;
+        }
+        
+        .product-card {
+            background: linear-gradient(to bottom, #2a4d2a, #1e3c1e);
+            border-radius: 10px;
+            padding: 15px;
+            width: 150px;
+            text-align: center;
+            border: 1px solid #4a9e4a;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        .product-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #c5e1a5;
+        }
+        
+        .product-name {
+            font-weight: bold;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        
+        .terminal {
+            background-color: rgba(0, 10, 5, 0.9);
+            border-top: 1px solid #3a7d3a;
+            padding: 20px;
+        }
+        
+        .prompt {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .prompt-text {
+            color: #7cda7c;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        
+        .command-input {
+            background: transparent;
+            border: none;
+            color: #e0e0e0;
+            font-size: 1rem;
+            width: 100%;
+            outline: none;
+            font-family: 'Courier New', monospace;
+            caret-color: #7cda7c;
+            flex-grow: 1;
+        }
+        
+        .command-output {
+            margin-top: 15px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        .success {
+            color: #7cda7c;
+        }
+        
+        .error {
+            color: #ff6b6b;
+        }
+        
+        .info {
+            color: #64b5f6;
+        }
+        
+        .link {
+            color: #4fc3f7;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        
+        .link:hover {
+            color: #7cda7c;
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(124, 218, 124, 0.5);
+            border-radius: 50%;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+            
+            .product-card {
+                width: 120px;
+                padding: 10px;
+            }
+            
+            .product-icon {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 15px;
+                max-height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span class="logo-text">Terminal Armazém Campo & Cidade</span>
+            </div>
+            <div class="controls">
+                <div class="control-btn close" onclick="alert('Você pode fechar esta janela normalmente com o botão do navegador')"></div>
+                <div class="control-btn minimize" onclick="minimizeTerminal()"></div>
+                <div class="control-btn maximize" onclick="maximizeTerminal()"></div>
+            </div>
+        </div>
+        
+        <div class="content" id="content">
+            <div class="welcome-message">
+                <h2>Terminal de Produtos Agrícolas</h2>
+                <p>Bem-vindo ao sistema de conexão direta com pequenos produtores locais!</p>
+                <p>Digite <span class="success">'help'</span> para ver os comandos disponíveis.</p>
+            </div>
+            
+            <div class="product-highlight">
+                <div class="product-card">
+                    <i class="fas fa-apple-alt product-icon"></i>
+                    <div class="product-name">Frutas Frescas</div>
+                </div>
+                <div class="product-card">
+                    <i class="fas fa-carrot product-icon"></i>
+                    <div class="product-name">Legumes</div>
+                </div>
+                <div class="product-card">
+                    <i class="fas fa-leaf product-icon"></i>
+                    <div class="product-name">Verduras</div>
+                </div>
+                <div class="product-card">
+                    <i class="fas fa-seedling product-icon"></i>
+                    <div class="product-name">Produtos Artesanais</div>
+                </div>
+            </div>
+            
+            <div id="command-history"></div>
+        </div>
+        
+        <div class="terminal">
+            <div class="prompt">
+                <span class="prompt-text">user@feiradigital:~$</span>
+                <input type="text" class="command-input" id="command-input" autofocus>
+            </div>
+            <div id="command-output"></div>
+        </div>
+    </div>
+
+    <script>
+        // Cria partículas flutuantes
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Tamanho aleatório entre 2px e 6px
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Posição aleatória
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Animação
+                const duration = Math.random() * 20 + 10;
+                particle.style.animation = `float ${duration}s linear infinite`;
+                
+                // Atraso aleatório para animação
+                particle.style.animationDelay = `${Math.random() * 20}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Adiciona animação de flutuação via JavaScript
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes float {
+                0% {
+                    transform: translateY(0) translateX(0);
+                    opacity: 1;
+                }
+                50% {
+                    transform: translateY(-100px) translateX(20px);
+                    opacity: 0.5;
+                }
+                100% {
+                    transform: translateY(-200px) translateX(0);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Terminal interativo
+        const commandInput = document.getElementById('command-input');
+        const commandOutput = document.getElementById('command-output');
+        const commandHistory = document.getElementById('command-history');
+        const contentDiv = document.getElementById('content');
+        
+        const commands = {
+            help: {
+                description: "Mostra todos os comandos disponíveis",
+                execute: () => {
+                    let output = '<span class="info">Comandos disponíveis:</span><br><br>';
+                    for (const cmd in commands) {
+                        output += `<span class="success">${cmd}</span> - ${commands[cmd].description}<br>`;
+                    }
+                    return output;
+                }
+            },
+            site: {
+                description: "Abre o site da Feira Digital",
+                execute: () => {
+                    setTimeout(() => {
+                        window.open('https://annajulyapontes.github.io/agrinhoAnna2025/', '_blank'); // Substitua pelo seu URL
+                    }, 1000);
+                    return '<span class="success">Redirecionando para o site da Feira Digital...</span>';
+                }
+            },
+            produtos: {
+                description: "Lista os produtos disponíveis",
+                execute: () => {
+                    return `<span class="info">Produtos disponíveis:</span><br>
+                    - Frutas frescas (maçã, banana, laranja, morango)<br>
+                    - Legumes (cenoura, batata, abobrinha, berinjela)<br>
+                    - Verduras (alface, couve, rúcula, espinafre)<br>
+                    - Produtos orgânicos<br><br>
+                    Digite <span class="success">'site'</span> para acessar e comprar.`;
+                }
+            },
+            contato: {
+                description: "Mostra informações de contato",
+                execute: () => {
+                    return `<span class="info">Informações de contato:</span><br>
+                    - Email: contato@rafael.assis.santos@escola.pr.gov.br<br>
+                    - Telefone: (43) 996561825<br>
+                    - Endereço: Rua dos Agricultores, 123 - Rio Branco do Ivaí Pr`;
+                }
+            },
+            clear: {
+                description: "Limpa o terminal",
+                execute: () => {
+                    commandOutput.innerHTML = '';
+                    commandHistory.innerHTML = '';
+                    return '';
+                }
+            },
+            sobre: {
+                description: "Mostra informações sobre o projeto",
+                execute: () => {
+                    return `<span class="info">Sobre o projeto:</span><br>
+                    Plataforma que conecta pequenos agricultores locais aos consumidores,<br>
+                    facilitando a venda de produtos frescos diretamente do produtor.<br>
+                    <br>
+                    Objetivos:<br>
+                    - Fortalecer a economia local<br>
+                    - Reduzir desperdícios<br>
+                    - Oferecer alimentos saudáveis com justiça social`;
+                }
+            }
+        };
+        
+        // Funções para os botões de controle
+        function minimizeTerminal() {
+            contentDiv.style.display = contentDiv.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function maximizeTerminal() {
+            const container = document.querySelector('.container');
+            if (container.style.width === '100%') {
+                container.style.width = '90%';
+                container.style.maxWidth = '900px';
+                container.style.margin = '20px 0';
+            } else {
+                container.style.width = '100%';
+                container.style.maxWidth = '100%';
+                container.style.margin = '0';
+                container.style.borderRadius = '0';
+            }
+        }
+        
+        commandInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = commandInput.value.trim().toLowerCase();
+                commandInput.value = '';
+                
+                // Adiciona o comando ao histórico
+                const commandElement = document.createElement('div');
+                commandElement.className = 'command-history-item';
+                commandElement.innerHTML = `<span class="prompt-text">user@feiradigital:~$</span> ${command}`;
+                commandHistory.appendChild(commandElement);
+                
+                // Processa o comando
+                let output = '';
+                if (commands[command]) {
+                    output = commands[command].execute();
+                } else if (command) {
+                    output = `<span class="error">Comando não encontrado: ${command}</span><br>Digite <span class="success">'help'</span> para ver os comandos disponíveis.`;
+                }
+                
+                if (output) {
+                    const outputElement = document.createElement('div');
+                    outputElement.className = 'command-output';
+                    outputElement.innerHTML = output;
+                    commandOutput.appendChild(outputElement);
+                }
+                
+                // Rolagem automática
+                contentDiv.scrollTop = contentDiv.scrollHeight;
+                commandOutput.scrollTop = commandOutput.scrollHeight;
+            }
+        });
+        
+        // Inicializa as partículas
+        createParticles();
+        
+        // Foca no input ao carregar a página
+        window.addEventListener('load', () => {
+            commandInput.focus();
+        });
+    </script>
+</body>
+</html>
